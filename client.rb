@@ -13,7 +13,7 @@ helpers do
 end
 
 get '/' do
-  'You might want to try <a href="stations">stations</a> instead.'
+  'You might want to try <a href="stations">stations</a> instead (or station_queue/{uic}).'
 end
 
 get '/stations' do
