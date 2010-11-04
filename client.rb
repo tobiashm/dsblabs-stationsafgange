@@ -13,7 +13,18 @@ helpers do
 end
 
 get '/' do
-  'You might want to try <a href="stations">stations</a> instead (or station_queue/{uic}).'
+  <<-EOC
+    <!DOCTYPE HTML>
+    <title>
+      RESTful gateway for DSB Labs
+    </title>
+    <h1>
+      RESTful gateway for <a href="http://dsblabs.dk/webservices/webservicestationsafgange">DSB Labs – Webservice: Stationsafgange</a>
+    </h1>
+    <p>
+      You might want to try <a href="stations">stations</a> instead (or station_queue/{uic}).
+    </p>
+  EOC
 end
 
 get '/stations' do
