@@ -1,0 +1,1 @@
+Simple Sinatra based server that expose the data from DSB Labs Stationsafgange SOAP based web service as JSON for simple HTTP GET request.
