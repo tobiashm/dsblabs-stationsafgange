@@ -10,6 +10,11 @@ helpers do
     soap_response = @client.request method_name, &block
     soap_response.to_hash["#{method_name}_response".to_sym]["#{method_name}_result".to_sym]
   end
+  def filter(stations)
+    params.each_key do |key|
+      stations.reject! {|st| st[key.to_sym] != params[key] }
+    end
+  end
 end
 
 get '/' do
@@ -30,6 +35,7 @@ end
 get '/stations' do
   result = dsb(:get_stations)
   stations = result[:station]
+  filter(stations)
   content_type 'application/json'
   stations.to_json
 end
