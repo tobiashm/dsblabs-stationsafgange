@@ -6,7 +6,7 @@ require "sinatra"
 helpers do
   attr_accessor :client
   def dsb(method_name, &block)
-    @client ||= Savon::Client.new "http://193.28.147.179/stationdeparture/Service.asmx?WSDL"
+    @client ||= Savon::Client.new "http://traindata.dsb.dk/stationdeparture/Service.asmx?WSDL"
     soap_response = @client.call method_name, &block
     soap_response.to_hash["#{method_name}_response".to_sym]["#{method_name}_result".to_sym]
   end
