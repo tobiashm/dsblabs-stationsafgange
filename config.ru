@@ -1,2 +1,2 @@
-require "client"
+require "./client"
 run Sinatra::Application
