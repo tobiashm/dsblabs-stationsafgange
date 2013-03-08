@@ -6,8 +6,8 @@ require "sinatra"
 helpers do
   attr_accessor :client
   def dsb(method_name, &block)
-    @client ||= Savon::Client.new "http://traindata.dsb.dk/stationdeparture/Service.asmx?WSDL"
-    soap_response = @client.request method_name, &block
+    @client ||= Savon.client(wsdl: "http://traindata.dsb.dk/stationdeparture/Service.asmx?WSDL")
+    soap_response = @client.call(method_name, &block)
     soap_response.to_hash["#{method_name}_response".to_sym]["#{method_name}_result".to_sym]
   end
   def filter(stations)
@@ -41,9 +41,9 @@ get '/stations' do
 end
 
 get '/station_queue/:uic' do |uic|
-  result = dsb(:get_station_queue) {|s| s.body = {"wsdl:request" => {"wsdl:UICNumber" => uic}}}
+  result = dsb(:get_station_queue) { message "request" => { "UICNumber" => uic } }
   raise Sinatra::NotFound if result[:status][:status_number] == "1"
-  trains = result[:trains] ? result[:trains][:train_object] : []
+  trains = result[:trains] && result[:trains][:queue] || []
   content_type 'application/json'
   trains.to_json
 end
