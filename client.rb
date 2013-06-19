@@ -5,14 +5,14 @@ require "sinatra"
 
 helpers do
   attr_accessor :client
-  def dsb(method_name, &block)
+  def dsb(method_name, arguments = {})
     @client ||= Savon.client(wsdl: "http://traindata.dsb.dk/stationdeparture/Service.asmx?WSDL")
-    soap_response = @client.call(method_name, &block)
+    soap_response = @client.call(method_name, arguments)
     soap_response.to_hash["#{method_name}_response".to_sym]["#{method_name}_result".to_sym]
   end
   def filter(stations)
     params.each_key do |key|
-      stations.reject! {|st| st[key.to_sym] != params[key] }
+      stations.reject! { |station| station[key.to_sym] != params[key] }
     end
   end
 end
@@ -24,11 +24,21 @@ get '/' do
       RESTful gateway for DSB Labs
     </title>
     <h1>
-      RESTful gateway for <a href="http://dsblabs.dk/webservices/webservicestationsafgange">DSB Labs – Webservice: Stationsafgange</a>
+      RESTful gateway for <a href="http://www.dsb.dk/dsb-labs/webservice-stationsafgange/">DSB Labs – Webservice: Stationsafgange</a>
     </h1>
     <p>
-      You might want to try <a href="stations">stations</a> instead (or station_queue/{uic}).
+      <em>All data is returned as JSON</em>
     </p>
+    <p>
+      You might want to see the <a href="stations">list of stations</a>.
+    </p>
+    <form action="queue">
+      <p>
+        Or find departures etc. for a given station.
+        <label>Station UIC: <input type="text" name="uic"></label>
+        <input type="submit">
+      </p>
+    </form>
   EOC
 end
 
@@ -40,8 +50,9 @@ get '/stations' do
   stations.to_json
 end
 
-get '/station_queue/:uic' do |uic|
-  result = dsb(:get_station_queue) { message "request" => { "UICNumber" => uic } }
+get '/queue' do
+  redirect_to '/' unless params[:uic]
+  result = dsb(:get_station_queue, message: { "request" => { "UICNumber" => params[:uic] }})
   raise Sinatra::NotFound if result[:status][:status_number] == "1"
   trains = result[:trains] && result[:trains][:queue] || []
   content_type 'application/json'
