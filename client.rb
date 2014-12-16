@@ -15,6 +15,9 @@ helpers do
       stations.reject! { |station| station[key.to_sym] != params[key] }
     end
   end
+  def add_queue_link(stations)
+    stations.each { |s| s[:queue] = "#{request.base_url}/queue?uic=#{s[:uic]}" }
+  end
 end
 
 get '/' do
@@ -46,6 +49,7 @@ get '/stations' do
   result = dsb(:get_stations)
   stations = result[:station]
   filter(stations)
+  add_queue_link(stations)
   content_type 'application/json'
   stations.to_json
 end
