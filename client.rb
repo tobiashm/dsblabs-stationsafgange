@@ -10,11 +10,13 @@ helpers do
     soap_response = @client.call(method_name, arguments)
     soap_response.to_hash["#{method_name}_response".to_sym]["#{method_name}_result".to_sym]
   end
+
   def filter(stations)
     params.each_key do |key|
       stations.reject! { |station| station[key.to_sym] != params[key] }
     end
   end
+
   def add_queue_link(stations)
     stations.each { |s| s[:queue] = "#{request.base_url}/queue?uic=#{s[:uic]}" }
   end
@@ -56,8 +58,8 @@ end
 
 get '/queue' do
   redirect_to '/' unless params[:uic]
-  result = dsb(:get_station_queue, message: { "request" => { "UICNumber" => params[:uic] }})
-  raise Sinatra::NotFound if result[:status][:status_number] == "1"
+  result = dsb(:get_station_queue, message: { "request" => { "UICNumber" => params[:uic] } })
+  fail Sinatra::NotFound if result[:status][:status_number] == "1"
   trains = result[:trains] && result[:trains][:queue] || []
   content_type 'application/json'
   trains.to_json
