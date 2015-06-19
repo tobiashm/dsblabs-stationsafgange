@@ -44,6 +44,25 @@ get '/' do
         <input type="submit">
       </p>
     </form>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
+    <script>
+      var stations = new Bloodhound({
+        identify: function(station) { return station.uic; },
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        prefetch: '/stations'
+      });
+
+      $('input[name="uic"]').typeahead(null, {
+        display: 'uic',
+        name: 'stations',
+        source: stations,
+        templates: {
+          suggestion: function(o) { return '<div>' + o.name + '</div>'; }
+        }
+      });
+    </script>
   EOC
 end
 
