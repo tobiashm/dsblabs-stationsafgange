@@ -11,12 +11,10 @@ GEM
       rack
       socksify
     mini_portile2 (2.1.0)
-    nokogiri (1.6.8)
+    nokogiri (1.7.0)
       mini_portile2 (~> 2.1.0)
-      pkg-config (~> 1.1.7)
     nori (2.6.0)
-    pkg-config (1.1.7)
-    rack (1.6.4)
+    rack (1.6.5)
     rack-protection (1.5.3)
       rack
     savon (2.11.1)
@@ -45,7 +43,7 @@ DEPENDENCIES
   sinatra
 
 RUBY VERSION
-   ruby 2.2.5p319
+   ruby 2.4.0p0
 
 BUNDLED WITH
-   1.12.5
+   1.13.7
