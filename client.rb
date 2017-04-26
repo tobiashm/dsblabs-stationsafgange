@@ -23,25 +23,25 @@ helpers do
   end
 end
 
-get '/' do
+get "/" do
   erb :index
 end
 
-get '/stations' do
+get "/stations" do
   result = dsb(:get_stations)
   stations = result[:station]
   filter(stations)
   add_queue_link(stations)
-  content_type 'application/json'
+  content_type "application/json"
   stations.to_json
 end
 
-get '/queue' do
-  redirect_to '/' unless params[:uic]
+get "/queue" do
+  redirect_to "/" unless params[:uic]
   result = dsb(:get_station_queue, message: { "request" => { "UICNumber" => params[:uic] } })
   fail Sinatra::NotFound if result[:status][:status_number] == "1"
   trains = result[:trains] && result[:trains][:queue] || []
-  content_type 'application/json'
+  content_type "application/json"
   trains.to_json
 end
 
